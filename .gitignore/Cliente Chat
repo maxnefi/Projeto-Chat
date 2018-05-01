@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h> 
+#include <errno.h>
+
+int main(){
+    
+    //Cria um socket
+int Meusocket;
+Meusocket = socket(AF_INET,SOCK_STREAM,0);
+
+//Especificar um endereço para o local que quero me conectar
+struct sockaddr_in servidor; 
+servidor.sin_family = AF_INET;
+servidor.sin_port = htons(31337);
+servidor.sin_addr.s_addr = INADDR_ANY;
+
+//Inicia a conexão com o servidor
+int conectar = connect (Meusocket, (struct sockaddr *) &servidor, sizeof (servidor));
+
+//Verifica se há algum erro na conexão
+if(Meusocket < 0)
+{
+perror("Socket");
+exit(1);
+}
+
+//Recebe os dados do servidor
+char servidor_resposta [256];
+recv (Meusocket, &servidor_resposta, sizeof(servidor_resposta), 0);
+
+//Imprimindo a resposta do servidor_resposta
+printf ("Resposta do servidor: %s\n", servidor_resposta);
+
+//Fechando o Socket
+close (Meusocket);
+return 0;
+    
+}
